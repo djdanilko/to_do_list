@@ -3,7 +3,7 @@ const input = document.querySelector(".input");
 const btn = document.querySelector(".btn");
 const list = document.querySelector(".list")
 
-const array = [];
+let array = [];
 
 const saved = localStorage.getItem("tasks");
 
@@ -30,8 +30,10 @@ form.addEventListener("submit", evt => {
 
     if (input.value.trim() === "") return;
 array.push({
-  text: input.value,
-  completed: false
+  id: Date.now(),
+  text: input.value.trim(),
+  completed: false,
+  deleted: false
 });
 
 saveToLocalStorage();
@@ -57,7 +59,7 @@ if (filter === "completed") {
   filteredArray = array.filter(item => item.completed);
 }
 
-    filteredArray.forEach((item, index) => {
+    filteredArray.forEach(item => {
         const li = document.createElement("li");
         list.appendChild(li)
 
@@ -84,14 +86,39 @@ if (filter === "completed") {
         li.appendChild(editBtn)
 
         editBtn.addEventListener("click", () => {
-            const newText = prompt("Edit:", item.text);
 
-            if (newText !== null && newText.trim() !=="") {
-                item.text = newText.trim();
-                saveToLocalStorage();
-                renderList();
-            }
-        })
+    const editInput = document.createElement("input");
+    editInput.type = "text";
+    editInput.value = item.text;
+    editInput.classList.add("edit-input");
+    li.replaceChild(editInput, span);
+
+    editInput.focus();
+
+    function saveEdit() {
+        const newText = editInput.value.trim();
+
+        if (newText !== "") {
+            item.text = newText;
+
+            saveToLocalStorage();
+            renderList();
+        }
+    }
+
+    editInput.addEventListener("keydown", e => {
+
+        if (e.key === "Enter") {
+            saveEdit();
+        }
+
+        if (e.key === "Escape") {
+            renderList();
+        }
+    });
+
+    editInput.addEventListener("blur", saveEdit);
+});
 
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete__btn")
@@ -99,9 +126,30 @@ if (filter === "completed") {
         li.appendChild(deleteBtn)
 
         deleteBtn.addEventListener("click", () => {
-            array.splice(index, 1);
+            array = array.filter(task => task.id !== item.id);
+
             saveToLocalStorage();
             renderList();
         })
+
     })
+
+        if (filter === "completed" && filteredArray.length > 0) {
+
+    const clearBtn = document.createElement("button");
+
+    clearBtn.textContent = "Delete all completed";
+
+    clearBtn.classList.add("clear-completed-btn");
+
+    list.appendChild(clearBtn);
+
+    clearBtn.addEventListener("click", () => {
+
+        array = array.filter(item => !item.completed);
+
+        saveToLocalStorage();
+        renderList();
+    });
+}
 }

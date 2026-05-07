@@ -36,10 +36,13 @@ input[type="checkbox"] {
 .filter:active {
    background: #3b82f6;
   color: white;
+  bg
+  
 }
 
 .filter:hover {
   background: #e5e7eb;
+  
 }
 
 .filter:active:hover:focus {
@@ -64,6 +67,16 @@ input[type="checkbox"] {
   margin-left: 20px;
 }
 
+.edit-input {
+    padding: 3px;
+    font-size: 16px;
+    /* border: 1px solid #fff; */
+    border-style: none;
+    border-radius: 6px;
+    background-color: transparent;
+}
+
 .delete__btn {
   background-color: #f87171;
+  margin-left: 10px;
 }
