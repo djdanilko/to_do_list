@@ -34,7 +34,7 @@ array.push({
   id: Date.now(),
   text: input.value.trim(),
   completed: false,
-  
+  deadline: null
 });
 
 saveToLocalStorage();
@@ -120,6 +120,25 @@ if (filter === "completed") {
 
     editInput.addEventListener("blur", saveEdit);
 });
+
+const deadlineBtn = document.createElement("button");
+deadlineBtn.classList.add("deadline__btn");
+deadlineBtn.textContent = "Deadline";
+li.appendChild(deadlineBtn);
+
+deadlineBtn.addEventListener("click", () => {
+      const deadline = prompt(
+        "Enter deadline:\n2026-05-10 18:00"
+    );
+
+    if (!deadline) return;
+
+    item.deadline = deadline;
+
+    saveToLocalStorage();
+
+    renderList();
+})
 
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete__btn")
