@@ -2,6 +2,7 @@ const form = document.querySelector(".form");
 const input = document.querySelector(".input");
 const btn = document.querySelector(".btn");
 const list = document.querySelector(".list")
+const taskCount = document.querySelector(".tasks-counter");
 
 let array = [];
 
@@ -33,7 +34,7 @@ array.push({
   id: Date.now(),
   text: input.value.trim(),
   completed: false,
-  deleted: false
+  
 });
 
 saveToLocalStorage();
@@ -152,4 +153,11 @@ if (filter === "completed") {
         renderList();
     });
 }
+
+const activeTasks = array.filter(item => !item.completed);
+
+const taskText = activeTasks.length === 1 ? "task" : "tasks";
+
+taskCount.textContent = `${activeTasks.length} ${taskText} left`;
+
 }
