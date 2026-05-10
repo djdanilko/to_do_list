@@ -73,6 +73,9 @@ if (filter === "completed") {
         checkbox.checked = item.completed;
         checkbox.addEventListener("change", () => {
             item.completed = checkbox.checked;
+            item.subtasks.forEach(subtask => {
+        subtask.completed = checkbox.checked;
+    });
             saveToLocalStorage();
             renderList();
         })
@@ -82,38 +85,68 @@ if (filter === "completed") {
         span.textContent = item.text;
         li.appendChild(span)
 
-        if(item.deadline) {
-            const deadlineText = document.createElement("p")
-            deadlineText.classList.add("deadline-text");
-            deadlineText.textContent =
-        `⏰ ${item.deadline}`;
-        const now = new Date();
+        if (item.deadline) {
 
-const deadlineDate =
-    new Date(item.deadline);
+    const deadlineWrapper =
+        document.createElement("div");
 
-const timeLeft =
-    deadlineDate - now;
+    deadlineWrapper.classList.add(
+        "deadline-wrapper"
+    );
+
+    const deadlineDateText =
+        document.createElement("p");
+
+    deadlineDateText.textContent =
+        `📅 ${item.deadline}`;
+
+    const countdownText =
+        document.createElement("p");
+
+    const now = new Date();
+
+    const deadlineDate =
+        new Date(item.deadline);
+
+    const timeLeft =
+        deadlineDate - now;
+
     if (timeLeft <= 0) {
 
-    deadlineText.textContent =
-        "❌ Deadline expired";
+        countdownText.textContent =
+            "❌ Deadline expired";
 
-} else {
-    const days =
-    Math.floor(timeLeft / 1000 / 60 / 60 / 24);
+    } else {
 
-const hours =
-    Math.floor(timeLeft / 1000 / 60 / 60) % 24;
+        const days =
+            Math.floor(
+                timeLeft / 1000 / 60 / 60 / 24
+            );
 
-const minutes =
-    Math.floor(timeLeft / 1000 / 60) % 60;
+        const hours =
+            Math.floor(
+                timeLeft / 1000 / 60 / 60
+            ) % 24;
 
-    deadlineText.textContent =
-    `⏰ ${days}d ${hours}h ${minutes}m left`;
+        const minutes =
+            Math.floor(
+                timeLeft / 1000 / 60
+            ) % 60;
+
+        countdownText.textContent =
+            `⏰ ${days}d ${hours}h ${minutes}m left`;
+    }
+
+    deadlineWrapper.appendChild(
+        deadlineDateText
+    );
+
+    deadlineWrapper.appendChild(
+        countdownText
+    );
+
+    li.appendChild(deadlineWrapper);
 }
-        li.appendChild(deadlineText);
-        }
 
         const editBtn = document.createElement("button");
         editBtn.classList.add("edit__btn")
@@ -275,12 +308,21 @@ if (item.subtasks && item.subtasks.length > 0) {
         subtaskCheckbox.checked =
             subtask.completed;
 
+subtaskLi.classList.toggle(
+    "completed",
+    subtask.completed
+);
+
         subtaskCheckbox.addEventListener(
             "change",
             () => {
 
                 subtask.completed =
                     subtaskCheckbox.checked;
+                    item.completed =
+    item.subtasks.every(
+        subtask => subtask.completed
+    );
                 saveToLocalStorage();
                 renderList();
             }
