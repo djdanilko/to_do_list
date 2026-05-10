@@ -417,15 +417,45 @@ deleteSubtaskBtn.addEventListener(
     "click",
     () => {
 
-        item.subtasks =
-            item.subtasks.filter(
-                task =>
-                    task.id !== subtask.id
-            );
+        Swal.fire({
 
-        saveToLocalStorage();
+            title: "Delete subtask?",
 
-        renderList();
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText:
+                "Delete",
+
+            cancelButtonText:
+                "Cancel"
+
+        }).then(result => {
+
+            if (result.isConfirmed) {
+
+                item.subtasks =
+                    item.subtasks.filter(
+                        task =>
+                            task.id !== subtask.id
+                    );
+
+                saveToLocalStorage();
+
+                renderList();
+                iziToast.success({
+
+    title: "Deleted",
+
+    message:
+        "Subtask deleted successfully",
+
+    position: "topRight"
+
+});
+            }
+        });
     }
 );
         subtaskList.appendChild(
@@ -442,11 +472,48 @@ deleteSubtaskBtn.addEventListener(
         li.appendChild(deleteBtn)
 
         deleteBtn.addEventListener("click", () => {
-            array = array.filter(task => task.id !== item.id);
+
+    Swal.fire({
+
+        title: "Delete task?",
+
+        text:
+            "This action cannot be undone",
+
+        icon: "warning",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Delete",
+
+        cancelButtonText: "Cancel"
+
+    }).then(result => {
+
+        if (result.isConfirmed) {
+
+            array = array.filter(
+                task =>
+                    task.id !== item.id
+            );
+
+            
 
             saveToLocalStorage();
+
             renderList();
-        })
+            iziToast.success({
+
+    title: "Deleted",
+
+    message: "Task deleted successfully",
+
+    position: "topRight"
+
+});
+        }
+    });
+});
 
     })
 
