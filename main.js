@@ -80,6 +80,13 @@ if (filter === "completed") {
         span.textContent = item.text;
         li.appendChild(span)
 
+        if(item.deadline) {
+            const deadlineText = document.createElement("p")
+            deadlineText.classList.add("deadline-text");
+            deadlineText.textContent =
+        `⏰ ${item.deadline}`;
+        li.appendChild(deadlineText);
+        }
 
         const editBtn = document.createElement("button");
         editBtn.classList.add("edit__btn")
@@ -127,17 +134,29 @@ deadlineBtn.textContent = "Deadline";
 li.appendChild(deadlineBtn);
 
 deadlineBtn.addEventListener("click", () => {
-      const deadline = prompt(
-        "Enter deadline:\n2026-05-10 18:00"
-    );
+      const deadlineInput =
+    document.createElement("input");
 
-    if (!deadline) return;
+    deadlineInput.type = "text";
 
-    item.deadline = deadline;
+li.appendChild(deadlineInput);
 
-    saveToLocalStorage();
+    flatpickr(deadlineInput, {
 
-    renderList();
+        enableTime: true,
+
+        dateFormat: "Y-m-d H:i",
+        minDate: new Date(),
+
+        onChange: function(selectedDates, dateStr) {
+
+            item.deadline = dateStr;
+
+            saveToLocalStorage();
+
+            renderList();
+        }
+    });
 })
 
         const deleteBtn = document.createElement("button");
