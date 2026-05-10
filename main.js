@@ -192,6 +192,59 @@ const deadlineBtn = document.createElement("button");
 deadlineBtn.classList.add("deadline__btn");
 deadlineBtn.textContent = "Deadline";
 li.appendChild(deadlineBtn);
+const deleteDeadlineBtn =
+    document.createElement("button");
+
+deleteDeadlineBtn.textContent =
+    "Delete deadline";
+
+if (item.deadline) {
+    li.appendChild(deleteDeadlineBtn);
+}
+
+deleteDeadlineBtn.addEventListener(
+    "click",
+    () => {
+
+        Swal.fire({
+
+            title:
+                "Delete deadline?",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText:
+                "Delete",
+
+            cancelButtonText:
+                "Cancel"
+
+        }).then(result => {
+
+            if (result.isConfirmed) {
+
+                item.deadline = null;
+
+                saveToLocalStorage();
+
+                renderList();
+
+                iziToast.success({
+
+                    title: "Deleted",
+
+                    message:
+                        "Deadline deleted",
+
+                    position:
+                        "topRight"
+                });
+            }
+        });
+    }
+);
 
 deadlineBtn.addEventListener("click", () => {
       const deadlineInput =
