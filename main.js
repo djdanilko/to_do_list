@@ -34,7 +34,9 @@ array.push({
   id: Date.now(),
   text: input.value.trim(),
   completed: false,
-  deadline: null
+  deadline: null,
+  subtasks: [
+  ]
 });
 
 saveToLocalStorage();
@@ -85,6 +87,31 @@ if (filter === "completed") {
             deadlineText.classList.add("deadline-text");
             deadlineText.textContent =
         `⏰ ${item.deadline}`;
+        const now = new Date();
+
+const deadlineDate =
+    new Date(item.deadline);
+
+const timeLeft =
+    deadlineDate - now;
+    if (timeLeft <= 0) {
+
+    deadlineText.textContent =
+        "❌ Deadline expired";
+
+} else {
+    const days =
+    Math.floor(timeLeft / 1000 / 60 / 60 / 24);
+
+const hours =
+    Math.floor(timeLeft / 1000 / 60 / 60) % 24;
+
+const minutes =
+    Math.floor(timeLeft / 1000 / 60) % 60;
+
+    deadlineText.textContent =
+    `⏰ ${days}d ${hours}h ${minutes}m left`;
+}
         li.appendChild(deadlineText);
         }
 
@@ -158,6 +185,214 @@ li.appendChild(deadlineInput);
         }
     });
 })
+
+const subtaskBtn =
+    document.createElement("button");
+
+subtaskBtn.textContent =
+    "+ subtask";
+
+li.appendChild(subtaskBtn);
+
+subtaskBtn.addEventListener("click", () => {
+
+    const subtaskInput =
+        document.createElement("input");
+
+    subtaskInput.type = "text";
+
+    subtaskInput.placeholder =
+        "New subtask...";
+
+    li.appendChild(subtaskInput);
+
+    subtaskInput.focus();
+
+    let isSaved = false;
+
+    function saveSubtask() {
+
+          if (isSaved) return;
+
+    isSaved = true;
+
+        const newSubtask =
+            subtaskInput.value.trim();
+
+        if (newSubtask !== "") {
+
+            item.subtasks.push({
+
+                id: Date.now(),
+
+                text: newSubtask,
+
+                completed: false
+            });
+
+            saveToLocalStorage();
+
+            renderList();
+        }
+    }
+
+    subtaskInput.addEventListener(
+        "keydown",
+        e => {
+
+            if (e.key === "Enter") {
+                saveSubtask();
+            }
+
+            if (e.key === "Escape") {
+                renderList();
+            }
+        }
+    );
+
+    subtaskInput.addEventListener(
+        "blur",
+        saveSubtask
+    );
+});
+
+if (item.subtasks && item.subtasks.length > 0) {
+
+    const subtaskList =
+        document.createElement("ul");
+
+    item.subtasks.forEach(subtask => {
+
+        const subtaskLi =
+            document.createElement("li");
+
+        const subtaskCheckbox =
+            document.createElement("input");
+
+        subtaskCheckbox.type =
+            "checkbox";
+
+        subtaskCheckbox.checked =
+            subtask.completed;
+
+        subtaskCheckbox.addEventListener(
+            "change",
+            () => {
+
+                subtask.completed =
+                    subtaskCheckbox.checked;
+                saveToLocalStorage();
+                renderList();
+            }
+        );
+
+        const subtaskSpan =
+            document.createElement("span");
+
+        subtaskSpan.textContent =
+            subtask.text;
+
+        subtaskLi.appendChild(
+            subtaskCheckbox
+        );
+
+        subtaskLi.appendChild(
+            subtaskSpan
+        );
+const editSubtaskBtn =
+    document.createElement("button");
+
+editSubtaskBtn.textContent =
+    "Edit subtask";
+
+subtaskLi.appendChild(
+    editSubtaskBtn
+);
+editSubtaskBtn.addEventListener(
+    "click",
+    () => {
+
+        const editInput =
+            document.createElement("input");
+
+        editInput.type = "text";
+
+        editInput.value =
+            subtask.text;
+
+        subtaskLi.replaceChild(
+            editInput,
+            subtaskSpan
+        );
+
+        editInput.focus();
+
+        function saveSubtaskEdit() {
+
+            const newText =
+                editInput.value.trim();
+
+            if (newText !== "") {
+
+                subtask.text = newText;
+
+                saveToLocalStorage();
+
+                renderList();
+            }
+        }
+
+        editInput.addEventListener(
+            "keydown",
+            e => {
+
+                if (e.key === "Enter") {
+                    saveSubtaskEdit();
+                }
+
+                if (e.key === "Escape") {
+                    renderList();
+                }
+            }
+        );
+
+        editInput.addEventListener(
+            "blur",
+            saveSubtaskEdit
+        );
+    }
+);
+const deleteSubtaskBtn =
+    document.createElement("button");
+
+deleteSubtaskBtn.textContent =
+    "Delete subtask";
+
+subtaskLi.appendChild(
+    deleteSubtaskBtn
+);
+deleteSubtaskBtn.addEventListener(
+    "click",
+    () => {
+
+        item.subtasks =
+            item.subtasks.filter(
+                task =>
+                    task.id !== subtask.id
+            );
+
+        saveToLocalStorage();
+
+        renderList();
+    }
+);
+        subtaskList.appendChild(
+            subtaskLi
+        );
+    });
+
+    li.appendChild(subtaskList);
+}
 
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete__btn")
