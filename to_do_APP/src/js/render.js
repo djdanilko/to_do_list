@@ -1,55 +1,17 @@
-const form = document.querySelector(".form");
-const input = document.querySelector(".input");
-const btn = document.querySelector(".btn");
-const list = document.querySelector(".list")
-const taskCount = document.querySelector(".tasks-counter");
+import { array, filter }
+from "./state.js";
 
-let array = [];
+import {
+    saveToLocalStorage
+} from "./storage.js";
 
-const saved = localStorage.getItem("tasks");
+const list =
+    document.querySelector(".list");
 
-let filter = "all";
+const taskCount =
+    document.querySelector(".tasks-counter");
 
-if (saved) {
-  array.push(...JSON.parse(saved));
-}
-renderList();
-
-const filterButtons = document.querySelectorAll("[data-filter]");
-
-filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        filter = btn.dataset.filter;
-        renderList();
-    });
-});
-
-
-
-form.addEventListener("submit", evt => {
-    evt.preventDefault(); 
-
-    if (input.value.trim() === "") return;
-array.push({
-  id: Date.now(),
-  text: input.value.trim(),
-  completed: false,
-  deadline: null,
-  subtasks: [
-  ]
-});
-
-saveToLocalStorage();
-renderList();
-console.log(array)
-input.value = "";
-});
-
-function saveToLocalStorage() {
-  localStorage.setItem("tasks", JSON.stringify(array));
-}
-
-function renderList() {
+export function renderList() {
     list.innerHTML = "";
 
 let filteredArray = array;
@@ -247,8 +209,13 @@ deleteDeadlineBtn.addEventListener(
 );
 
 deadlineBtn.addEventListener("click", () => {
+    if (li.querySelector(".deadline-input")) return;
       const deadlineInput =
     document.createElement("input");
+
+    deadlineInput.classList.add(
+    "deadline-input"
+);
 
     deadlineInput.type = "text";
 
